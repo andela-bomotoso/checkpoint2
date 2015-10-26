@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="checkpoint.andela.parser.FileParserTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-10-24T10:24:32" hostname="GRACE-PC" time="0.003">
+  <properties/>
+  <testcase name="testReadFile" classname="checkpoint.andela.parser.FileParserTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
