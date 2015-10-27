@@ -10,17 +10,11 @@ import java.util.TreeMap;
 public class AttributeValueFile <key,value>  {
 
     private String fileAddress;
-    private List<String> attributes;
     private List<KeyValuePair<String, String>> keyValues;
 
     public AttributeValueFile() {
 
         }
-
-    public AttributeValueFile(String fileAddress, List<String> attributes) {
-     this.fileAddress = fileAddress;
-     this.attributes = attributes;
-    }
 
     public String getFileAddress() {
         return fileAddress;
@@ -28,14 +22,6 @@ public class AttributeValueFile <key,value>  {
 
     public void setFileAddress(String fileAddress) {
         this.fileAddress = fileAddress;
-    }
-
-    public List<String> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(List<String> attributes) {
-        this.attributes = attributes;
     }
 
     public List<KeyValuePair<String, String>> getKeyValues() {
