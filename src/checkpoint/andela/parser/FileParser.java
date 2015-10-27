@@ -1,19 +1,18 @@
 package checkpoint.andela.parser;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import com.intellij.dvcs.branch.DvcsSyncSettings;
 
-public class FileParser {
+import java.io.*;
+import java.security.Key;
+import java.util.*;
+
+public class FileParser implements Runnable {
 
     Properties properties;
     private AttributeValueFile fileToParse;
     private File file;
     FileInputStream fileInputStream;
     BufferedInputStream bufferedInputStream;
-
 
     public FileParser(AttributeValueFile fileToParse) {
         this.fileToParse = fileToParse;
@@ -32,34 +31,46 @@ public class FileParser {
         return file.exists();
     }
 
-    public void readFile() {
+    public List<KeyValuePair<String, String>> readAttributeFile() {
+        List<KeyValuePair<String, String>> keyValues = new ArrayList<KeyValuePair<String, String>>();
+        final int key = 0;
+        final int value = 1;;
         try {
-
-            fileInputStream = new FileInputStream(file);
-            bufferedInputStream = new BufferedInputStream(fileInputStream);
-            while(bufferedInputStream.available() > 0){
-                System.out.print((char)bufferedInputStream.read());
-                //bufferedInputStream.read();
+            BufferedReader bfr = new BufferedReader(new FileReader(file));
+            String line;
+            int index = 0;
+            while ((line = bfr.readLine()) != null) {
+                if (!line.startsWith("#") && !line.isEmpty() && !line.startsWith("//") && !line.startsWith("/")) {
+                    String[] pair = line.trim().split(" - ");
+                    keyValues.add(new KeyValuePair<>(pair[0],pair[1]));
+                }
             }
-            //properties.load(fileInputStream);
-            //System.out.println("Available keys are: "+properties.keySet());
+            fileToParse.setKeyValues(keyValues);
+
         } catch (IOException ioException) {
             System.out.println(ioException.getMessage());
-        }
+        } finally {
 
-        finally {
-
-            try{
-                if(bufferedInputStream != null && fileInputStream != null) {
+            try {
+                if (bufferedInputStream != null && fileInputStream != null) {
                     fileInputStream.close();
                     bufferedInputStream.close();
                 }
             } catch (IOException ioException) {
                 System.out.println(ioException.getMessage());
             }
-            }
         }
+       /* List<KeyValuePair<String, String>> keyVal= fileToParse.getKeyValues();
+        for (KeyValuePair<String, String> pair :keyVal) {
+            System.out.println(pair.key + "=" + pair.value);
+        }*/
+        return keyValues;
     }
+
+    public void run() {
+
+    }
+}
 
 
 

@@ -3,17 +3,20 @@ package checkpoint.andela.parser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
-public class AttributeValueFile  {
+public class AttributeValueFile <key,value>  {
 
     private String fileAddress;
     private List<String> attributes;
-    private List<List<String>> keyValues = new ArrayList<List<String>>();
+    private List<KeyValuePair<String, String>> keyValues;
 
     public AttributeValueFile() {
 
-    }
+        }
+
     public AttributeValueFile(String fileAddress, List<String> attributes) {
      this.fileAddress = fileAddress;
      this.attributes = attributes;
@@ -35,12 +38,11 @@ public class AttributeValueFile  {
         this.attributes = attributes;
     }
 
-    public void setValues(List<List<String>> keyValues) {
-        this.keyValues = keyValues;
-    }
-
-    public List<List<String>> getKeyValues() {
+    public List<KeyValuePair<String, String>> getKeyValues() {
         return keyValues;
     }
 
+    public void setKeyValues(List<KeyValuePair<String, String>> keyValues) {
+        this.keyValues = keyValues;
+    }
 }
