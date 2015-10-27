@@ -1,7 +1,5 @@
 package checkpoint.andela.parser;
 
-import com.intellij.dvcs.branch.DvcsSyncSettings;
-
 import java.io.*;
 import java.util.*;
 
