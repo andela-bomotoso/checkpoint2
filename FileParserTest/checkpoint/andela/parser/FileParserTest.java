@@ -13,6 +13,7 @@ import java.util.List;
 public class FileParserTest extends TestCase {
     List<String> keys = new ArrayList<String>();
     List<String> values = new ArrayList<String>();
+
     AttributeValueFile attributeValueFile;
     FileParser fileParser;
 
@@ -21,9 +22,12 @@ public class FileParserTest extends TestCase {
         super.setUp();
         attributeValueFile = new AttributeValueFile();
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
+        attributeValueFile.setKeyValueSeparator(" - ");
         fileParser = new FileParser(attributeValueFile);
         fileParser.readAttributeFile();
+
         List<KeyValuePair<String, String>> keyVal= attributeValueFile.getKeyValues();
+
         for (KeyValuePair<String, String> pair :keyVal) {
             keys.add(pair.key);
             values.add(pair.value);
@@ -34,7 +38,9 @@ public class FileParserTest extends TestCase {
     public void testFileExistsWhenFileExist() {
         AttributeValueFile attributeValueFile = new AttributeValueFile();
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
+
         FileParser fileParser = new FileParser(attributeValueFile);
+
         assertTrue(fileParser.fileExists());
     }
 
@@ -42,8 +48,10 @@ public class FileParserTest extends TestCase {
     public void testFileExistsWhenFileDoesNotExist() {
         AttributeValueFile attributeValueFile = new AttributeValueFile();
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reaction.DAT");
+
         FileParser fileParser = new FileParser(attributeValueFile);
         fileParser.setFileToParse(attributeValueFile);
+
         assertFalse(fileParser.fileExists());
         assertEquals(attributeValueFile, fileParser.getFileToParse());
     }
@@ -73,9 +81,6 @@ public class FileParserTest extends TestCase {
 
     }
 
-
-
-
     @Test
     public void testReadFileWhenAKeyIsPresentInAnAntributeFile() {
         assertTrue(keys.contains("UNIQUE-ID"));
@@ -87,9 +92,6 @@ public class FileParserTest extends TestCase {
 
     @Test
     public void testReadFileWhenAKeyIsNotPresentInAnAntributeFile() {
-        AttributeValueFile attributeValueFile = new AttributeValueFile();
-        attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
-        FileParser fileParser = new FileParser(attributeValueFile);
         fileParser.readAttributeFile();
         assertFalse(keys.contains("SPECIES-ID"));
 
@@ -106,12 +108,8 @@ public class FileParserTest extends TestCase {
 
     @Test
     public void testReadFileWhenAValueIsNotPresentInAnAntributeFile() {
-        AttributeValueFile attributeValueFile = new AttributeValueFile();
-        attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
-        FileParser fileParser = new FileParser(attributeValueFile);
         fileParser.readAttributeFile();
         assertFalse(values.contains("ANDELA"));
-
     }
 
 

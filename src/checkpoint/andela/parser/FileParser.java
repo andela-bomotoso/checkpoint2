@@ -19,7 +19,7 @@ public class FileParser implements Runnable {
         return fileToParse;
     }
 
-      public void setFileToParse(AttributeValueFile fileToParse) {
+    public void setFileToParse(AttributeValueFile fileToParse) {
         this.fileToParse = fileToParse;
     }
 
@@ -39,7 +39,7 @@ public class FileParser implements Runnable {
 
             while ((line = bfr.readLine()) != null) {
                 if ( !lineToBeSkipped(line)) {
-                    String[] pair = line.trim().split(" - ");
+                    String[] pair = line.trim().split(fileToParse.getKeyValueSeparator());
                     keyValues.add(new KeyValuePair<>(pair[0],pair[1]));
                 }
             }
