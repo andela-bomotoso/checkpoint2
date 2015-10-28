@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="checkpoint.andela.parser.FileParserTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-10-24T10:24:32" hostname="GRACE-PC" time="0.003">
+<testsuite name="checkpoint.andela.parser.FileParserTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2015-10-28T18:30:18" hostname="GRACE-PC" time="0.474">
   <properties/>
-  <testcase name="testReadFile" classname="checkpoint.andela.parser.FileParserTest" time="0.003"/>
+  <testcase name="testFileExistsWhenFileExist" classname="checkpoint.andela.parser.FileParserTest" time="0.127"/>
+  <testcase name="testReadFileWhenAValueIsPresentInAnAntributeFile" classname="checkpoint.andela.parser.FileParserTest" time="0.083"/>
+  <testcase name="testReadFileWhenAKeyIsPresentInAnAntributeFile" classname="checkpoint.andela.parser.FileParserTest" time="0.049"/>
+  <testcase name="testReadFileWhenAValueIsNotPresentInAnAntributeFile" classname="checkpoint.andela.parser.FileParserTest" time="0.087"/>
+  <testcase name="testReadFileWhenAKeyIsNotPresentInAnAntributeFile" classname="checkpoint.andela.parser.FileParserTest" time="0.039"/>
+  <testcase name="testFileExistsWhenFileDoesNotExist" classname="checkpoint.andela.parser.FileParserTest" time="0.086"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
