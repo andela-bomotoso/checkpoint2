@@ -1,9 +1,6 @@
 package checkpoint.andela.parser;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Properties;
 
@@ -13,7 +10,7 @@ public class DatabaseManager {
     private String username;
     private String password;
     private String databaseName;
-    private String query;
+
 
     Statement statement;
     Connection connection;
@@ -60,14 +57,6 @@ public class DatabaseManager {
         this.databaseName = databaseName;
     }
 
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
     public Connection establishConnection() {
         try {
             connection = DriverManager.getConnection(databaseUrl, connectionProperties);
@@ -78,30 +67,70 @@ public class DatabaseManager {
         return connection;
     }
 
+    public boolean databaseAlreadyExist(String dbName){
+
+        try{
+           establishConnection();
+
+            ResultSet resultSet = connection.getMetaData().getCatalogs();
+
+            while (resultSet.next()) {
+
+                String databaseName = resultSet.getString(1);
+                if(databaseName.equals(dbName)){
+                    return true;
+                }
+            }
+            resultSet.close();
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public void createDatabase(String databaseName) {
         establishConnection();
+        if( databaseAlreadyExist(databaseName)) {
+            String dropDatabaseQuery = "DROP DATABASE " + databaseName;
+            runQuery(dropDatabaseQuery);
+        }
+        String createDatabaseQuery = "CREATE DATABASE " + databaseName;
+        runQuery(createDatabaseQuery);
+    }
+
+    public void createTable( String databaseName, String tableName,List<String>fieldNames) {
+        establishConnection();
+        String query = "create table "+databaseName+"."+tableName+" (";
+        String createTableQuery;
+        for(String field:fieldNames) {
+            query+="`"+field+"` text,";
+        }
+        createTableQuery = removeLastCharacter(query);
+        String createTableSql =createTableQuery+")";
+        System.out.println(createTableSql);
+       runQuery(createTableSql);
+    }
+
+    public void runQuery(String query) {
+
         try {
             statement = connection.createStatement();
-
-        String sqlCreateDbQuery =  "CREATE DATABASE "+databaseName;
-        statement.executeUpdate(sqlCreateDbQuery);
+            statement.executeUpdate(query);
         }
         catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
-
     }
 
-    public void createTable(String Tablename) {
-       try {
-           statement = connection.createStatement();
-           statement.executeLargeUpdate(getQuery());
-       }
-       catch (SQLException sqlException) {
-           sqlException.printStackTrace();
-       }
+    public String removeLastCharacter(String str) {
+        String output="";
 
-
+        for(int i = 0; i < str.length()-1; i++) {
+            output+=str.charAt(i);
+        }
+        return output;
     }
-
 }

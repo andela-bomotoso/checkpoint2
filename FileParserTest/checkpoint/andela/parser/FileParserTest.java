@@ -20,15 +20,15 @@ public class FileParserTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        attributeValueFile = new AttributeValueFile();
+        attributeValueFile = new AttributeValueFile(" - ","//");
+        attributeValueFile.setComment("#");
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
-        attributeValueFile.setKeyValueSeparator(" - ");
         fileParser = new FileParser(attributeValueFile);
         fileParser.readAttributeFile();
 
         List<KeyValuePair<String, String>> keyVal= attributeValueFile.getKeyValues();
 
-        for (KeyValuePair<String, String> pair :keyVal) {
+        for (KeyValuePair<String, String> pair : keyVal) {
             keys.add(pair.key);
             values.add(pair.value);
         }
@@ -36,7 +36,7 @@ public class FileParserTest extends TestCase {
 
     @Test
     public void testFileExistsWhenFileExist() {
-        AttributeValueFile attributeValueFile = new AttributeValueFile();
+
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
 
         FileParser fileParser = new FileParser(attributeValueFile);
@@ -46,7 +46,7 @@ public class FileParserTest extends TestCase {
 
     @Test
     public void testFileExistsWhenFileDoesNotExist() {
-        AttributeValueFile attributeValueFile = new AttributeValueFile();
+        //AttributeValueFile attributeValueFile = new AttributeValueFile(" - ","//");
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reaction.DAT");
 
         FileParser fileParser = new FileParser(attributeValueFile);
@@ -65,7 +65,7 @@ public class FileParserTest extends TestCase {
     @Test
     public void lineOfTextfileStartswithSpecialCharacterSlash() {
         String line = "// ";
-        assertTrue(fileParser.lineToBeSkipped(line));
+        assertFalse(fileParser.lineToBeSkipped(line));
     }
 
     @Test
@@ -111,6 +111,4 @@ public class FileParserTest extends TestCase {
         fileParser.readAttributeFile();
         assertFalse(values.contains("ANDELA"));
     }
-
-
 }

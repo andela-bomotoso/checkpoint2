@@ -6,6 +6,7 @@ import java.util.*;
 public class FileParser implements Runnable {
 
     private AttributeValueFile fileToParse;
+    private String endofRecordDelimiter;
     private File file;
     FileInputStream fileInputStream;
     BufferedInputStream bufferedInputStream;
@@ -23,6 +24,14 @@ public class FileParser implements Runnable {
         this.fileToParse = fileToParse;
     }
 
+    public String getEndofRecordDelimiter() {
+        return fileToParse.getRecordMarker();
+    }
+
+    public void setEndofRecordDelimiter(String endofRecordDelimiter) {
+        fileToParse.setRecordMarker(endofRecordDelimiter);
+    }
+
     public boolean fileExists() {
         return file.exists();
     }
@@ -36,13 +45,19 @@ public class FileParser implements Runnable {
         try {
             BufferedReader bfr = new BufferedReader(new FileReader(file));
             String line;
+            int index = 0;
 
             while ((line = bfr.readLine()) != null) {
-                if ( !lineToBeSkipped(line)) {
-                    String[] pair = line.trim().split(fileToParse.getKeyValueSeparator());
+                if ( !lineToBeSkipped(line) && !line.startsWith(fileToParse.getRecordMarker())) {
+                    String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(),2);
                     keyValues.add(new KeyValuePair<>(pair[0],pair[1]));
                 }
+                else if (line.startsWith(fileToParse.getRecordMarker())){
+                    keyValues.add(new KeyValuePair<>(fileToParse.getRecordMarker(), ""));
+                    index ++;
+                }
             }
+            //System.out.println(index);
 
             fileToParse.setKeyValues(keyValues);
 
@@ -62,11 +77,15 @@ public class FileParser implements Runnable {
                 System.out.println(ioException.getMessage());
             }
         }
-        return keyValues;
+
+//        for(KeyValuePair<String, String> pair : keyValues) {
+//            System.out.println(pair.key + " " + pair.value+ index);
+
+            return keyValues;
     }
 
     public boolean lineToBeSkipped(String line) {
-        return  line.startsWith("/") || line.startsWith("#") || line.isEmpty();
+        return (line.startsWith("/") && (line.trim() !=fileToParse.getRecordMarker())) ||  line.startsWith(fileToParse.getComment()) || line.isEmpty();
     }
 
     public void run() {
