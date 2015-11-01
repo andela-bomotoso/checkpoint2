@@ -1,7 +1,6 @@
 package checkpoint.andela.db;
 
 import checkpoint.andela.parser.AttributeValueFile;
-import checkpoint.andela.parser.DatabaseManager;
 import checkpoint.andela.parser.FileParser;
 import checkpoint.andela.parser.KeyValuePair;
 
@@ -23,15 +22,7 @@ public class DbWriter {
         this.tableFields = tableFields;
     }
 
-    public String getEndofRecordDelimiter() {
-        return recordMaker;
-    }
-
-    public void setEndofRecordDelimiter(String endofRecordDelimiter) {
-        this.recordMaker = endofRecordDelimiter;
-    }
-
-    public void writeBufferToDatabase(String DatabaseName, String TableName, List<String>tablefields) {
+    public void writeBufferToDatabase(String databaseName, String tableName, List<String>tableFields) {
         databaseManager.establishConnection();
 
         List<String>recordKeys = new ArrayList<>();
@@ -39,32 +30,27 @@ public class DbWriter {
 
         for(KeyValuePair<String,String> pair : bufferedFileContent) {
 
-            if(!pair.key .equals(getEndofRecordDelimiter())) {
+            if(!pair.key.equals(recordMaker)) {
 
-                if(!recordKeys.contains(pair.key) && tablefields.contains(pair.key)) {
+                if((!recordKeys.contains(pair.key)) && tableFields.contains(pair.key)) {
 
                     recordKeys.add(pair.key);
                     recordValues.add(pair.value);
                 }
-                else
-                {
-                    if(tablefields.contains(pair.key)) {
-                        modifyExistingField(recordKeys, recordValues, pair.value);
+                else if(tableFields.contains(pair.key)) {
+                        modifyExistingField(recordKeys, recordValues, pair.key,pair.value);
                     }
-                }
             }
-            else {
-                if(!recordKeys.isEmpty()) {
-                    String sql = "INSERT INTO " + DatabaseName + "." + TableName + generateInsertStatement(recordKeys, recordValues);
+            else if(!recordKeys.isEmpty() && databaseManager.tableAlreadyExist(databaseName,tableName)) {
+                    String sql = "INSERT INTO " + databaseName + "." + tableName + generateInsertStatement(recordKeys, recordValues);
                     databaseManager.runQuery(sql);
                     recordKeys.clear();
                     recordValues.clear();
-                }
             }
         }
     }
 
-    public void modifyExistingField(List<String>keys,List<String>values, String currentKey) {
+    public void modifyExistingField(List<String>keys,List<String>values, String currentKey, String currentValue) {
         int index = 0;
         for(int i = 0; i < keys.size(); i++) {
             index = i;
@@ -72,7 +58,7 @@ public class DbWriter {
                 break;
             }
         }
-        values.set(index, values.get(index) + "," + currentKey);
+        values.set(index, values.get(index) + "," + currentValue);
     }
 
     public String generateInsertStatement(List<String>recordKeys,List<String>recordValues) {
@@ -86,7 +72,7 @@ public class DbWriter {
             values +=  "\"" + escapeDoubleQuotes(recordValues.get(i)) + "\",";
         }
 
-        querySubstring = "(" + databaseManager.removeLastCharacter(fields) + ")" +
+        querySubstring = "(" + databaseManager.removeLastCharacter(fields) + ") " +
                 "VALUES " + "(" + databaseManager.removeLastCharacter(values) + ")";
 
         return querySubstring;

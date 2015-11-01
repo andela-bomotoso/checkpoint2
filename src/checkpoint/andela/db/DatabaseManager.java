@@ -1,26 +1,24 @@
-package checkpoint.andela.parser;
+package checkpoint.andela.db;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Properties;
 
 public class DatabaseManager {
+
     Properties connectionProperties = new Properties();
     private String databaseUrl;
     private String username;
     private String password;
     private String databaseName;
-
-
     Statement statement;
     Connection connection;
 
-    public boolean connectionEstablished;
+    public DatabaseManager(String databaseUrl, String username, String password) {
+        setDatabaseUrl(databaseUrl);
+        setUsername(username);
+        setPassword(password);
 
-    public DatabaseManager(String databaseUrl,String username,String password) {
-        this.databaseUrl = databaseUrl;
-        this.username = username;
-        this.password = password;
         connectionProperties.put("user",this.username);
         connectionProperties.put("password",this.password);
     }
@@ -70,9 +68,9 @@ public class DatabaseManager {
     public boolean databaseAlreadyExist(String dbName){
 
         try{
-           establishConnection();
+            establishConnection();
 
-            ResultSet resultSet = connection.getMetaData().getCatalogs();
+            ResultSet resultSet = establishConnection().getMetaData().getCatalogs();
 
             while (resultSet.next()) {
 
@@ -87,7 +85,23 @@ public class DatabaseManager {
         catch(Exception e){
             e.printStackTrace();
         }
+        return false;
+    }
 
+    public boolean tableAlreadyExist(String databaseName,String tableName){
+        establishConnection();
+        try{
+            ResultSet resultSet = connection.getMetaData().getTables(null,databaseName,tableName,null);
+
+            if(resultSet.next()) {
+                    return true;
+                }
+
+            resultSet.close();
+        }
+        catch(SQLException sqlException){
+            sqlException.printStackTrace();
+        }
         return false;
     }
 
@@ -97,21 +111,28 @@ public class DatabaseManager {
             String dropDatabaseQuery = "DROP DATABASE " + databaseName;
             runQuery(dropDatabaseQuery);
         }
-        String createDatabaseQuery = "CREATE DATABASE " + databaseName;
-        runQuery(createDatabaseQuery);
+
+            String createDatabaseQuery = "CREATE DATABASE " + databaseName;
+            runQuery(createDatabaseQuery);
+
     }
 
     public void createTable( String databaseName, String tableName,List<String>fieldNames) {
-        establishConnection();
+
+        if( tableAlreadyExist(databaseName,tableName)) {
+            String dropTableQuery = "DROP TABLE " + databaseName+"."+tableName;
+            runQuery(dropTableQuery);
+        }
         String query = "create table "+databaseName+"."+tableName+" (";
         String createTableQuery;
+
         for(String field:fieldNames) {
             query+="`"+field+"` text,";
         }
+
         createTableQuery = removeLastCharacter(query);
         String createTableSql =createTableQuery+")";
-        System.out.println(createTableSql);
-       runQuery(createTableSql);
+        runQuery(createTableSql);
     }
 
     public void runQuery(String query) {

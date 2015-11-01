@@ -7,11 +7,11 @@ public class AttributeValueFile  {
     private String fileAddress;
     private String keyValueSeparator;
     private String recordMarker;
-    private String comment;
+    private String commentDelimiter;
     private List<KeyValuePair<String, String>> keyValues;
 
-
-    public AttributeValueFile(String keyValueSeparator, String recordMarker) {
+    public AttributeValueFile(String commentDelimiter, String keyValueSeparator, String recordMarker) {
+            this.commentDelimiter = commentDelimiter;
             this.keyValueSeparator = keyValueSeparator;
             this.recordMarker = recordMarker;
         }
@@ -40,12 +40,12 @@ public class AttributeValueFile  {
         this.recordMarker = recordMarker;
     }
 
-    public String getComment() {
-        return comment;
+    public String getCommentDelimiter() {
+        return commentDelimiter;
     }
 
-    public void setComment(String comment){
-        this.comment = comment;
+    public void setCommentDelimiter(String comment){
+        this.commentDelimiter = commentDelimiter;
     }
 
     public List<KeyValuePair<String, String>> getKeyValues() {
@@ -55,4 +55,5 @@ public class AttributeValueFile  {
     public void setKeyValues(List<KeyValuePair<String, String>> keyValues) {
         this.keyValues = keyValues;
     }
+
 }
