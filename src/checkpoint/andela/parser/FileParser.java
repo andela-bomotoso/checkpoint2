@@ -7,8 +7,6 @@ public class FileParser implements Runnable {
 
     private AttributeValueFile fileToParse;
     private File file;
-    FileInputStream fileInputStream;
-    BufferedInputStream bufferedInputStream;
 
     public FileParser(AttributeValueFile fileToParse) {
         this.fileToParse = fileToParse;
@@ -53,21 +51,6 @@ public class FileParser implements Runnable {
         catch (IOException ioException) {
             System.out.println(ioException.getMessage());
         }
-
-        finally {
-
-            try {
-
-                if (bufferedInputStream != null && fileInputStream != null) {
-                    fileInputStream.close();
-                    bufferedInputStream.close();
-                }
-            }
-            catch (IOException ioException) {
-                System.out.println(ioException.getMessage());
-            }
-        }
-
             return keyValues;
     }
 
@@ -77,6 +60,7 @@ public class FileParser implements Runnable {
 
     public void run() {
 
+        readAttributeFile();
     }
 }
 

@@ -68,7 +68,6 @@ public class DatabaseManager {
     public boolean databaseAlreadyExist(String dbName){
 
         try{
-            establishConnection();
 
             ResultSet resultSet = establishConnection().getMetaData().getCatalogs();
 
@@ -89,13 +88,13 @@ public class DatabaseManager {
     }
 
     public boolean tableAlreadyExist(String databaseName,String tableName){
-        establishConnection();
+
         try{
-            ResultSet resultSet = connection.getMetaData().getTables(null,databaseName,tableName,null);
+            ResultSet resultSet = establishConnection().getMetaData().getTables(null, databaseName,tableName,null);
 
             if(resultSet.next()) {
-                    return true;
-                }
+                return true;
+            }
 
             resultSet.close();
         }
@@ -120,6 +119,7 @@ public class DatabaseManager {
     public void createTable( String databaseName, String tableName,List<String>fieldNames) {
 
         if( tableAlreadyExist(databaseName,tableName)) {
+            System.out.println("Table Exists");
             String dropTableQuery = "DROP TABLE " + databaseName+"."+tableName;
             runQuery(dropTableQuery);
         }
