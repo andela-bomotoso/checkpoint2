@@ -28,8 +28,10 @@ public class DbWriterTest {
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
 
         fileParser = new FileParser(attributeValueFile);
+        AttributeValueFile bufferedContent = fileParser.getFileToParse();
 
-        dbWriter = new DbWriter(fileParser.readAttributeFile(),databaseManager,tableFields,"//");
+        //dbWriter = new DbWriter(fileParser.readAttributeFile(),databaseManager,tableFields,"//");
+        dbWriter = new DbWriter(bufferedContent.getKeyValues(),databaseManager,tableFields,"//");
 
         tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID", "TYPES", "COMMON-NAME", "ATOM-MAPPINGS"));
 

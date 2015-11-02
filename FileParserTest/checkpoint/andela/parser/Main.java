@@ -20,15 +20,15 @@ public class Main {
        List<String>tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID","TYPES","COMMON-NAME", "ATOM-MAPPINGS",
                "SYNONYMS", "SYSTEMATIC-NAME", "TEMPLATE-FILE","^COEFFICIENT","^COMPARTMENT"));
         fileParser.run();
-        DbWriter dbWriter = new DbWriter(fileParser.readAttributeFile(),databaseManager,tableFields,"//");
+       DbWriter dbWriter = new DbWriter(fileParser.getFileToParse().getKeyValues(),databaseManager,tableFields,"//");
 
-        databaseManager.establishConnection();
-        databaseManager.createDatabase("reactiondb");
+       databaseManager.establishConnection();
+       databaseManager.createDatabase("reactiondb");
 
         databaseManager.createTable("reactiondb","reactions",tableFields);
 
-       System.out.println(databaseManager.databaseAlreadyExist("reactiondb"));
-        System.out.println(databaseManager.tableAlreadyExist("reactiondb", "reactions"));
+       //System.out.println(databaseManager.databaseAlreadyExist("reactiondb"));
+       // System.out.println(databaseManager.tableAlreadyExist("reactiondb", "reactions"));
 
        dbWriter.writeBufferToDatabase("reactiondb","reactions",tableFields);
 

@@ -22,6 +22,14 @@ public class DbWriter implements Runnable {
         this.recordMaker = recordMaker;
     }
 
+    public List<KeyValuePair<String, String>> getBufferedFileContent() {
+        return bufferedFileContent;
+    }
+
+    public void setBufferedFileContent(List<KeyValuePair<String, String>> bufferedFileContent) {
+        this.bufferedFileContent = bufferedFileContent;
+    }
+
     public void writeBufferToDatabase(String databaseName, String tableName, List<String> tableFields) {
 
 

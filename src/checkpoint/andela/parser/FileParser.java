@@ -1,12 +1,17 @@
 package checkpoint.andela.parser;
 
 import java.io.*;
+import java.nio.Buffer;
 import java.util.*;
 
 public class FileParser implements Runnable {
 
     private AttributeValueFile fileToParse;
     private File file;
+    //private Buffer buffer;
+    BufferedReader bufferedReader;
+    String line;
+    List<KeyValuePair<String, String>> keyValues = new ArrayList<KeyValuePair<String, String>>();
 
     public FileParser(AttributeValueFile fileToParse) {
         this.fileToParse = fileToParse;
@@ -25,16 +30,14 @@ public class FileParser implements Runnable {
         return file.exists();
     }
 
-    public List<KeyValuePair<String, String>> readAttributeFile() {
-        List<KeyValuePair<String, String>> keyValues = new ArrayList<KeyValuePair<String, String>>();
+    public void readAttributeFile() {
 
         try {
                 if(fileExists()) {
-                    BufferedReader bfr = new BufferedReader(new FileReader(file));
+                    bufferedReader = new BufferedReader(new FileReader(file));
 
-                    String line;
 
-                while ((line = bfr.readLine()) != null) {
+                /*while ((line = bufferedReader.readLine()) != null) {
                     if (!lineToBeSkipped(line)) {
                         String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
                         keyValues.add(new KeyValuePair<>(pair[0], pair[1]));
@@ -43,15 +46,15 @@ public class FileParser implements Runnable {
                     else if (line.startsWith(fileToParse.getRecordMarker())) {
                         keyValues.add(new KeyValuePair<>(fileToParse.getRecordMarker(), ""));
                     }
-                }
+                }*/
 
-                fileToParse.setKeyValues(keyValues);
+
             }
         }
         catch (IOException ioException) {
             System.out.println(ioException.getMessage());
         }
-            return keyValues;
+            //return keyValues;
     }
 
     public boolean lineToBeSkipped(String line) {
@@ -59,8 +62,26 @@ public class FileParser implements Runnable {
     }
 
     public void run() {
-
         readAttributeFile();
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!lineToBeSkipped(line)) {
+                    String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
+                    keyValues.add(new KeyValuePair<>(pair[0], pair[1]));
+                } else if (line.startsWith(fileToParse.getRecordMarker())) {
+                    keyValues.add(new KeyValuePair<>(fileToParse.getRecordMarker(), ""));
+                }
+            }
+            fileToParse.setKeyValues(keyValues);
+            /*for(KeyValuePair keyVal:keyValues)
+            {
+                System.out.println(keyVal.key+":"+keyVal.value);
+            }*/
+
+        }
+        catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 }
 

@@ -23,7 +23,7 @@ public class FileParserTest extends TestCase {
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
 
         fileParser = new FileParser(attributeValueFile);
-        fileParser.readAttributeFile();
+        fileParser.run();
 
         List<KeyValuePair<String, String>> keyValues= attributeValueFile.getKeyValues();
 
