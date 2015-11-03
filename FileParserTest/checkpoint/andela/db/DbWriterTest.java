@@ -3,7 +3,9 @@ package checkpoint.andela.db;
 import checkpoint.andela.parser.*;
 import checkpoint.andela.db.DbWriter;
 
+import checkpoint.andela.thread.Buffer;
 import jdk.nashorn.internal.ir.annotations.Ignore;
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,33 +15,33 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class DbWriterTest {
+public class DbWriterTest extends TestCase{
 
     AttributeValueFile attributeValueFile;
     DatabaseManager databaseManager;
     FileParser fileParser;
     DbWriter dbWriter;
     List <String> tableFields;
+    List<KeyValuePair<String, String>> bufferedFileContent;
 
-    @Before
+    @Override
     public void setUp() throws Exception {
-        databaseManager =  new DatabaseManager("jdbc:mysql://localhost/","root","admin");
-        attributeValueFile = new AttributeValueFile("#"," - ","//");
+        super.setUp();
+        databaseManager = new DatabaseManager("jdbc:mysql://localhost/", "root", "admin");
+
+        attributeValueFile = new AttributeValueFile("#", " - ", "//");
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
 
         fileParser = new FileParser(attributeValueFile);
-        AttributeValueFile bufferedContent = fileParser.getFileToParse();
 
-        //dbWriter = new DbWriter(fileParser.readAttributeFile(),databaseManager,tableFields,"//");
-        dbWriter = new DbWriter(bufferedContent.getKeyValues(),databaseManager,tableFields,"//");
-
+        bufferedFileContent = fileParser.writeFileToBuffer();
         tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID", "TYPES", "COMMON-NAME", "ATOM-MAPPINGS"));
-
+        dbWriter = new DbWriter( databaseManager);
     }
 
-    @Ignore
+    @Test
     public void testWriteBufferToDatabase() throws Exception {
-        dbWriter.writeBufferToDatabase("reactiondb","reactions",tableFields);
+        dbWriter.writeBufferToDatabase(bufferedFileContent,"reactiondb","reactions",tableFields,"//");
     }
 
     @Test

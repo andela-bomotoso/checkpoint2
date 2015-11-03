@@ -1,12 +1,11 @@
-package checkpoint.andela.parser;
+ package checkpoint.andela.parser;
 
-import checkpoint.andela.db.DatabaseManager;
-import junit.framework.TestCase;
-import org.junit.Test;
-
-
-import java.util.ArrayList;
-import java.util.List;
+ import checkpoint.andela.db.DatabaseManager;
+ import junit.framework.TestCase;
+ import org.junit.Ignore;
+ import org.junit.Test;
+ import java.util.ArrayList;
+ import java.util.List;
 
 public class FileParserTest extends TestCase {
     List<String> keys = new ArrayList<String>();
@@ -23,7 +22,7 @@ public class FileParserTest extends TestCase {
         attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
 
         fileParser = new FileParser(attributeValueFile);
-        fileParser.run();
+        fileParser.writeFileToBuffer();
 
         List<KeyValuePair<String, String>> keyValues= attributeValueFile.getKeyValues();
 
@@ -95,12 +94,6 @@ public class FileParserTest extends TestCase {
     @Test
     public void testReadFileWhenAValueIsNotPresentInAnAntributeFile() {
         assertFalse(values.contains("ANDELA"));
-    }
-
-    @Test
-    public void testDatabaseAlreadyExistsWhenDatabaseExist() {
-        DatabaseManager databaseManager =  new DatabaseManager("jdbc:mysql://localhost/","root","admin");
-        assertTrue(databaseManager.databaseAlreadyExist("reactiondb"));
     }
 
 }

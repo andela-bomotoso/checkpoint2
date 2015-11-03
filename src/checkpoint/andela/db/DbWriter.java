@@ -3,23 +3,22 @@ package checkpoint.andela.db;
 import checkpoint.andela.parser.AttributeValueFile;
 import checkpoint.andela.parser.FileParser;
 import checkpoint.andela.parser.KeyValuePair;
+import checkpoint.andela.thread.Buffer;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DbWriter implements Runnable {
+public class DbWriter  {
 
-    private String recordMaker;
     List<KeyValuePair<String, String>> bufferedFileContent = new ArrayList<KeyValuePair<String, String>>();
     DatabaseManager databaseManager;
-    List<String> tableFields;
 
-
-    public DbWriter(List<KeyValuePair<String, String>> bufferedFileContent, DatabaseManager databaseManager, List<String> tableFields, String recordMaker) {
-        this.bufferedFileContent = bufferedFileContent;
+    public DbWriter( DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
-        this.tableFields = tableFields;
-        this.recordMaker = recordMaker;
     }
 
     public List<KeyValuePair<String, String>> getBufferedFileContent() {
@@ -30,12 +29,10 @@ public class DbWriter implements Runnable {
         this.bufferedFileContent = bufferedFileContent;
     }
 
-    public void writeBufferToDatabase(String databaseName, String tableName, List<String> tableFields) {
-
-
+    public void writeBufferToDatabase(List<KeyValuePair<String,String>> bufferedFileContent,String databaseName, String tableName, List<String> tableFields,String recordMaker) {
+        databaseManager.establishConnection();
         List<String> recordKeys = new ArrayList<>();
         List<String> recordValues = new ArrayList<>();
-
         for (KeyValuePair<String, String> pair : bufferedFileContent) {
 
             if (!pair.key.equals(recordMaker)) {
@@ -48,7 +45,9 @@ public class DbWriter implements Runnable {
                     modifyExistingField(recordKeys, recordValues, pair.key, pair.value);
                 }
             } else if (!recordKeys.isEmpty()) {
+
                 String sql = "INSERT INTO " + databaseName + "." + tableName + generateInsertStatement(recordKeys, recordValues);
+
                 databaseManager.runQuery(sql);
                 recordKeys.clear();
                 recordValues.clear();
@@ -89,8 +88,18 @@ public class DbWriter implements Runnable {
     }
 
 
-    public void run() {
+   /* public void run() {
+        KeyValuePair recordBuffer;
+            recordBuffer = buffer.getContentFromBuffer();
+            logReadActivity(recordBuffer);
+        }*/
 
-    }
+
+
+   /* public void logReadActivity(KeyValuePair keyValuePair) {
+        dateTimeFormatter.print(DateTime.now());
+        String str = threadName+"("+dateTimeFormatter.print(DateTime.now())+")---- collected "+keyValuePair.key+" "+keyValuePair.value +" from buffer";
+        System.out.println(str);
+    }*/
 }
 

@@ -28,40 +28,32 @@ DatabaseManager databaseManager;
         Connection connection =  databaseManager.establishConnection();
         assertNotNull(connection);
     }
-
-
     @Test
     public void testDatabaseAlreadyExistWhenThereIsAnExistingDatabase() throws Exception {
+        databaseManager.createDatabase("reactiondb");
         assertTrue(databaseManager.databaseAlreadyExist("reactiondb"));
     }
 
     @Test
     public void testDatabaseAlreadyExistWhenThereIsNoExistingDatabase() throws Exception {
-        assertFalse(databaseManager.databaseAlreadyExist("Andela"));
-    }
-
-    @Ignore
-    public void testTableAlreadyExistWhenThereIsAnExistingDatabaseTable() throws Exception {
-        assertTrue(databaseManager.tableAlreadyExist("reactiondb", "reactions"));
+        assertFalse(databaseManager.databaseAlreadyExist("ANDELA"));
     }
 
     @Test
-    public void testCreateDatabase() throws Exception {
-        databaseManager.createDatabase("helpmebuy");
-        assertTrue(databaseManager.databaseAlreadyExist("helpmebuy"));
-    }
-
-    @Ignore
     public void testCreateTable() throws Exception {
-       List<String> tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID", "TYPES", "COMMON-NAME", "ATOM-MAPPINGS"));
-        databaseManager.createTable("helpmebuy","reactions",tableFields);
-        assertTrue(databaseManager.tableAlreadyExist("helpmebuy","reactions"));
-
+        List<String> tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID", "TYPES", "COMMON-NAME", "ATOM-MAPPINGS"));
+        databaseManager.createTable("reactiondb","reactions",tableFields);
     }
 
-    @Ignore
+    @Test
     public void testRunQuery() throws Exception {
-
+        String dropDbIfExists = "DROP DATABASE IF EXISTS ANDELA";
+        databaseManager.runQuery(dropDbIfExists);
+        String createDatabaseQuery = "CREATE DATABASE ANDELA";
+        databaseManager.runQuery(createDatabaseQuery);
+        assertTrue(databaseManager.databaseAlreadyExist("andela"));
+        databaseManager.runQuery(dropDbIfExists);
+        assertFalse(databaseManager.databaseAlreadyExist("andela"));
     }
 
     @Test

@@ -68,9 +68,7 @@ public class DatabaseManager {
     public boolean databaseAlreadyExist(String dbName){
 
         try{
-
             ResultSet resultSet = establishConnection().getMetaData().getCatalogs();
-
             while (resultSet.next()) {
 
                 String databaseName = resultSet.getString(1);
@@ -79,7 +77,6 @@ public class DatabaseManager {
                 }
             }
             resultSet.close();
-
         }
         catch(Exception e){
             e.printStackTrace();
@@ -87,49 +84,29 @@ public class DatabaseManager {
         return false;
     }
 
-    public boolean tableAlreadyExist(String databaseName,String tableName){
-
-        try{
-            ResultSet resultSet = establishConnection().getMetaData().getTables(null, databaseName,tableName,null);
-
-            if(resultSet.next()) {
-                return true;
-            }
-
-            resultSet.close();
-        }
-        catch(SQLException sqlException){
-            sqlException.printStackTrace();
-        }
-        return false;
+    private void dropTableIfExists(String databaseName, String tableName){
+        establishConnection();
+        String query = "DROP TABLE IF EXISTS "+ databaseName+"."+tableName;
+        runQuery(query);
     }
 
     public void createDatabase(String databaseName) {
         establishConnection();
-        if( databaseAlreadyExist(databaseName)) {
-            String dropDatabaseQuery = "DROP DATABASE " + databaseName;
-            runQuery(dropDatabaseQuery);
-        }
-
+        if( !databaseAlreadyExist(databaseName)) {
             String createDatabaseQuery = "CREATE DATABASE " + databaseName;
             runQuery(createDatabaseQuery);
-
+        }
     }
 
     public void createTable( String databaseName, String tableName,List<String>fieldNames) {
+        dropTableIfExists(databaseName,tableName);
 
-        if( tableAlreadyExist(databaseName,tableName)) {
-            System.out.println("Table Exists");
-            String dropTableQuery = "DROP TABLE " + databaseName+"."+tableName;
-            runQuery(dropTableQuery);
-        }
-        String query = "create table "+databaseName+"."+tableName+" (";
+        String query = "CREATE TABLE "+databaseName+"."+tableName+" (";
         String createTableQuery;
 
         for(String field:fieldNames) {
             query+="`"+field+"` text,";
         }
-
         createTableQuery = removeLastCharacter(query);
         String createTableSql =createTableQuery+")";
         runQuery(createTableSql);
