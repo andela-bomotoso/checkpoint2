@@ -87,19 +87,5 @@ public class DbWriter  {
         return str.replace("\"", "\\\"");
     }
 
-
-   /* public void run() {
-        KeyValuePair recordBuffer;
-            recordBuffer = buffer.getContentFromBuffer();
-            logReadActivity(recordBuffer);
-        }*/
-
-
-
-   /* public void logReadActivity(KeyValuePair keyValuePair) {
-        dateTimeFormatter.print(DateTime.now());
-        String str = threadName+"("+dateTimeFormatter.print(DateTime.now())+")---- collected "+keyValuePair.key+" "+keyValuePair.value +" from buffer";
-        System.out.println(str);
-    }*/
 }
 

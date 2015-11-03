@@ -3,17 +3,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=edge"/>
-<title>Test results - Class checkpoint.andela.db.DbWriterTest</title>
+<title>Test results - Class checkpoint.andela.db.DatabaseManagerTest</title>
 <link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
 <link href="../css/style.css" rel="stylesheet" type="text/css"/>
 <script src="../js/report.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="content">
-<h1>Class checkpoint.andela.db.DbWriterTest</h1>
+<h1>Class checkpoint.andela.db.DatabaseManagerTest</h1>
 <div class="breadcrumbs">
 <a href="../index.html">all</a> &gt; 
-<a href="../packages/checkpoint.andela.db.html">checkpoint.andela.db</a> &gt; DbWriterTest</div>
+<a href="../packages/checkpoint.andela.db.html">checkpoint.andela.db</a> &gt; DatabaseManagerTest</div>
 <div id="summary">
 <table>
 <tr>
@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">4</div>
+<div class="counter">6</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">1m28.37s</div>
+<div class="counter">1.288s</div>
 <p>duration</p>
 </div>
 </td>
@@ -75,23 +75,33 @@
 </tr>
 </thead>
 <tr>
-<td class="success">testEscapeDoubleQuotes</td>
-<td>0.071s</td>
+<td class="success">testCreateTable</td>
+<td>0.758s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">testGenerateInsertStatement</td>
-<td>0.031s</td>
+<td class="success">testDatabaseAlreadyExistWhenThereIsAnExistingDatabase</td>
+<td>0.348s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">testModifyExistingField</td>
-<td>0.042s</td>
+<td class="success">testDatabaseAlreadyExistWhenThereIsNoExistingDatabase</td>
+<td>0.082s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">testWriteBufferToDatabase</td>
-<td>1m28.23s</td>
+<td class="success">testEstablishConnectionWhenConnectionCanBeEstablished</td>
+<td>0.048s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testRemoveLastCharacter</td>
+<td>0.009s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testRunQuery</td>
+<td>0.043s</td>
 <td class="success">passed</td>
 </tr>
 </table>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="checkpoint.andela.db.DatabaseManagerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2015-11-03T21:13:15" hostname="GRACE-PC" time="1.29">
+  <properties/>
+  <testcase name="testDatabaseAlreadyExistWhenThereIsAnExistingDatabase" classname="checkpoint.andela.db.DatabaseManagerTest" time="0.348"/>
+  <testcase name="testRemoveLastCharacter" classname="checkpoint.andela.db.DatabaseManagerTest" time="0.009"/>
+  <testcase name="testCreateTable" classname="checkpoint.andela.db.DatabaseManagerTest" time="0.758"/>
+  <testcase name="testDatabaseAlreadyExistWhenThereIsNoExistingDatabase" classname="checkpoint.andela.db.DatabaseManagerTest" time="0.082"/>
+  <testcase name="testEstablishConnectionWhenConnectionCanBeEstablished" classname="checkpoint.andela.db.DatabaseManagerTest" time="0.048"/>
+  <testcase name="testRunQuery" classname="checkpoint.andela.db.DatabaseManagerTest" time="0.043"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

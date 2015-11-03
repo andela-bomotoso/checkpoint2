@@ -9,7 +9,7 @@ import java.io.*;
 
 import java.util.*;
 
-public class FileParser implements Runnable {
+public class FileParser {
 
     private AttributeValueFile fileToParse;
     private File file;
@@ -34,7 +34,7 @@ public class FileParser implements Runnable {
         return file.exists();
     }
 
-    private void readAttributeFile() {
+    public void readAttributeFile() {
         try {
                 if(fileExists()) {
                     bufferedReader = new BufferedReader(new FileReader(file));
@@ -52,12 +52,16 @@ public class FileParser implements Runnable {
             while ((line = bufferedReader.readLine()) != null) {
 
                 if (!lineToBeSkipped(line)) {
+
                     String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
-                    keyValues.add(new KeyValuePair<>(pair[0], pair[1]));
+                    KeyValuePair keyValuePair = new KeyValuePair<>(pair[0], pair[1]);
+                    updateBuffer(keyValuePair);
                 }
 
                 else if (line.startsWith(fileToParse.getRecordMarker())) {
-                    keyValues.add(new KeyValuePair<>(fileToParse.getRecordMarker(), ""));
+
+                    KeyValuePair keyValuePair = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
+                    updateBuffer(keyValuePair);
                 }
             }
         }
@@ -71,22 +75,13 @@ public class FileParser implements Runnable {
         return keyValues;
     }
 
+    public void updateBuffer(KeyValuePair keyValuePair) {
+        keyValues.add(keyValuePair);
+
+    }
     public boolean lineToBeSkipped(String line) {
         return (line.startsWith("/") && (line.trim() != fileToParse.getRecordMarker())) ||  line.startsWith(fileToParse.getCommentDelimiter()) || line.isEmpty();
     }
-
-    public void run() {
-
-    }
-
-
-   /* public void logBufferWriteActivity(KeyValuePair keyValuePair) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        dateTimeFormatter.print(DateTime.now());
-
-        String str = threadName+"("+dateTimeFormatter.print(DateTime.now())+")---- wrote "+keyValuePair.key+" "+keyValuePair.value +" to buffer";
-        System.out.println(str);
-    }*/
 
     }
 
