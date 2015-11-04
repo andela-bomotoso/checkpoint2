@@ -32,27 +32,28 @@ import java.io.IOException;
 
             String line;
             try {
-                Thread.sleep(1000);
-                while ((line = bufferedReader.readLine()) != null) {
+                    while ((line = bufferedReader.readLine()) != null && sharedBuffer.getCanWrite()) {
 
-                    if (!lineToBeSkipped(line)) {
+                        if (!lineToBeSkipped(line)) {
 
-                     String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
-                     KeyValuePair   keyValuePair = new KeyValuePair<>(pair[0], pair[1]);
-                     sharedBuffer.writeContentToBuffer(keyValuePair);
-                     logBufferWriteActivity(keyValuePair);
+                            String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
+                            KeyValuePair keyValuePair = new KeyValuePair<>(pair[0], pair[1]);
+                            sharedBuffer.writeContentToBuffer(keyValuePair);
 
-
-                    } else if (line.startsWith(fileToParse.getRecordMarker())) {
-                      KeyValuePair  keyValuePair = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
-                      sharedBuffer.writeContentToBuffer(keyValuePair);
-                      logBufferWriteActivity(keyValuePair);
+                        } else if (line.startsWith(fileToParse.getRecordMarker())) {
+                            KeyValuePair keyValuePair = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
+                            sharedBuffer.writeContentToBuffer(keyValuePair);
+                        }
                     }
-                }
+                    sharedBuffer.setCanWrite(false);
+
+                    return;
+
+
+
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-
         }
 
         public void readAttributeFile() {
@@ -74,12 +75,4 @@ import java.io.IOException;
             return (line.startsWith("/") && (line.trim() != fileToParse.getRecordMarker())) ||  line.startsWith(fileToParse.getCommentDelimiter()) || line.isEmpty();
         }
 
-        public void logBufferWriteActivity(KeyValuePair keyValuePair) {
-
-            dateTimeFormatter.print(DateTime.now());
-
-            String str = getClass().getSimpleName() + "(" + dateTimeFormatter.print(DateTime.now()) + ")---- wrote " + keyValuePair.key + " " + keyValuePair.value + " to buffer";
-            System.out.println(str);
-
-        }
 }

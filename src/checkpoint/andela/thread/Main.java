@@ -9,9 +9,6 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Created by GRACE on 11/3/2015.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -25,7 +22,7 @@ public class Main {
        FileParserThread fileParserThread =  new FileParserThread(attributeValueFile,sharedBuffer);
        DbWriterThread dbWriterThread = new DbWriterThread(databaseManager,sharedBuffer);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newCachedThreadPool();
 
         executorService.execute(fileParserThread);
         executorService.execute(dbWriterThread);

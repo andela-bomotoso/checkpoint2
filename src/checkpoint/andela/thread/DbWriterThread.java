@@ -19,23 +19,14 @@ public class DbWriterThread implements Runnable {
 
     public void run() {
         KeyValuePair recordBuffer;
-        //for (int count = 1; count <= 100; count++) {
-            //while (sharedBuffer.readStatus()) {
+        while (true) {
             try {
-                Thread.sleep(1000);
                 recordBuffer = sharedBuffer.getContentFromBuffer();
-                logBufferReadActivity(recordBuffer);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-           // }
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
-
-        public void logBufferReadActivity(KeyValuePair keyValuePair) {
-            dateTimeFormatter.print(DateTime.now());
-            String str = getClass().getSimpleName() + "(" + dateTimeFormatter.print(DateTime.now()) + ")---- collected " + keyValuePair.key + " " + keyValuePair.value + " from buffer";
-            System.out.println(str);
-        }
     }
 
