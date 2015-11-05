@@ -39,9 +39,9 @@ public class DbWriterTest extends TestCase{
         dbWriter = new DbWriter( databaseManager);
     }
 
-    @Test
+    @Ignore
     public void testWriteBufferToDatabase() throws Exception {
-        dbWriter.writeBufferToDatabase(bufferedFileContent,"reactiondb","reactions",tableFields,"//");
+        //dbWriter.writeBufferToDatabase(bufferedFileContent,"reactiondb","reactions",tableFields,"//");
     }
 
     @Test

@@ -3,6 +3,9 @@ package checkpoint.andela.thread;
 import checkpoint.andela.db.DatabaseManager;
 import checkpoint.andela.db.DbWriter;
 import checkpoint.andela.parser.KeyValuePair;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,51 +13,64 @@ import java.util.List;
 
 public class DbWriterThread implements Runnable {
 
+    DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     DatabaseManager databaseManager;
     LogBuffer logBuffer;
     Buffer sharedBuffer = new Buffer();
+    KeyValuePair bufferRead;
     DbWriter dbWriter = new DbWriter(databaseManager);
 
-    public DbWriterThread( DbWriter dbWriter, LogBuffer logBuffer,Buffer sharedBuffer) {
+    private String databaseName;
+    private String tableName;
+    private List<String>tableFields;
+    private String recordMaker;
+
+    public DbWriterThread(DbWriter dbWriter, String databasename, String tableName,
+                          List<String> tableFields, String recordMaker, LogBuffer logBuffer,Buffer sharedBuffer) {
+
         this.dbWriter = dbWriter;
+        this.databaseName = databasename;
+        this.tableName = tableName;
+        this.tableFields = tableFields;
+        this.recordMaker = recordMaker;
         this.logBuffer = logBuffer;
         this.sharedBuffer = sharedBuffer;
     }
 
     public void run() {
      List<KeyValuePair<String,String>> bufferedRecord = new ArrayList<KeyValuePair<String, String>>();
-    KeyValuePair bufferRead;
+
        while (true) {
+
             try {
+
                 bufferRead = sharedBuffer.getContentFromBuffer();
                 logThreadReadActivity();
                 bufferedRecord.add(bufferRead);
-                //writeRecordToDatabase(bufferedRecord);
 
+                if(bufferRead.key.equals(recordMaker)) {
+                    writeRecordToDatabase(bufferedRecord);
+                }
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
             }
         }
    }
+
     public void logThreadReadActivity() {
-        List<String> bufferDetails = sharedBuffer.getBufferDetails();
-        String bufferWriteTime = bufferDetails.get(0);
-        String bufferKey = bufferDetails.get(1);
-        String bufferValue = bufferDetails.get(2);
-        String currentLog = getClass().getSimpleName() + bufferWriteTime + ")----collected " + bufferKey + " " + bufferValue + " from buffer";
-        //System.out.println(currentLog);
-       // threadManager.updateLog(currentLog);
-//        try {
-//            logBuffer.writeToLogBuffer(currentLog);
-//        }
-//        catch (InterruptedException interruptedException) {
-//            interruptedException.printStackTrace();
-//        }
+
+        String bufferReadTime = dateTimeFormatter.print(DateTime.now());
+        String key =   bufferRead.key.toString();
+        String value = bufferRead.value.toString();
+        String currentLog = "("+getClass().getSimpleName() + bufferReadTime+ ")----collected " + key + " " + value + " from buffer";
+
+        logBuffer.writeToLogBuffer(currentLog);
     }
 
     public void writeRecordToDatabase(List<KeyValuePair<String,String>> bufferedRecord) {
-        List<String> tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID", "TYPES", "COMMON-NAME", "ATOM-MAPPINGS"));
-       dbWriter.writeBufferToDatabase(bufferedRecord,"reactiondb","reactions",tableFields,"//");
+
+        dbWriter.writeBufferToDatabase(bufferedRecord,databaseName,tableName,tableFields,recordMaker);
+       bufferedRecord.clear();
     }
 }
 

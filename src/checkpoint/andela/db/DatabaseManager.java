@@ -15,6 +15,7 @@ public class DatabaseManager {
     Connection connection;
 
     public DatabaseManager(String databaseUrl, String username, String password) {
+
         setDatabaseUrl(databaseUrl);
         setUsername(username);
         setPassword(password);
@@ -63,6 +64,17 @@ public class DatabaseManager {
             sqlException.printStackTrace();
         }
         return connection;
+    }
+
+    public void closeConnection() {
+        if(connection != null){
+            try {
+                connection.close();
+            }
+            catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        }
     }
 
     public boolean databaseAlreadyExist(String dbName){

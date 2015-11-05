@@ -11,6 +11,7 @@ public class AttributeValueFile  {
     private List<KeyValuePair<String, String>> keyValues;
 
     public AttributeValueFile(String commentDelimiter, String keyValueSeparator, String recordMarker) {
+
             this.commentDelimiter = commentDelimiter;
             this.keyValueSeparator = keyValueSeparator;
             this.recordMarker = recordMarker;

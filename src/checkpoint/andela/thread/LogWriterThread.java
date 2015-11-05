@@ -1,9 +1,6 @@
 package checkpoint.andela.thread;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by GRACE on 11/4/2015.
@@ -33,27 +30,26 @@ public class LogWriterThread implements Runnable{
         }
     }
 
-    public void writeBufferToFile(String logBuffer) {
+    public void writeBufferToFile(String currentLog) {
         checkIfFileExist();
-        try {
-            fileWriter = new FileWriter(fileToWrite,true);
-            bufferedWriter  = new BufferedWriter(fileWriter);
-            bufferedWriter.write(logBuffer);
-        }
-        catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
+
+            try {
+
+                fileWriter = new FileWriter(fileToWrite, true);
+                bufferedWriter = new BufferedWriter(fileWriter);
+                bufferedWriter.write(currentLog + "\n");
+                bufferedWriter.close();
+
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
     }
 
     public void run() {
 
-        try {
-            writeBufferToFile(logBuffer.getLogBuffer());
-        }
-        catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        while (true){
+        String currentLog = logBuffer.getLogBuffer();
+        writeBufferToFile(currentLog);
+       }
     }
-
-
 }

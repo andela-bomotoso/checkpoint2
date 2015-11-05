@@ -3,10 +3,11 @@ package checkpoint.andela.thread;
 import checkpoint.andela.db.DatabaseManager;
 import checkpoint.andela.db.DbWriter;
 import checkpoint.andela.parser.AttributeValueFile;
-import checkpoint.andela.parser.FileParser;
-import sun.nio.ch.FileKey;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,9 +15,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-       Buffer sharedBuffer = new Buffer();
+       /*Buffer sharedBuffer = new Buffer();
        LogBuffer logBuffer = new LogBuffer();
-       ThreadManager threadManager = new ThreadManager();
 
        AttributeValueFile attributeValueFile = new AttributeValueFile("#"," - ","//");
        attributeValueFile.setFileAddress("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.DAT");
@@ -25,7 +25,11 @@ public class Main {
        DbWriter dbWriter = new DbWriter(databaseManager);
 
        FileParserThread fileParserThread =  new FileParserThread(attributeValueFile,logBuffer,sharedBuffer);
-       DbWriterThread dbWriterThread = new DbWriterThread(dbWriter,logBuffer,sharedBuffer);
+
+       List<String> tableFields = new ArrayList<String>(Arrays.asList("UNIQUE-ID", "TYPES", "COMMON-NAME", "ATOM-MAPPINGS"));
+
+       DbWriterThread dbWriterThread = new DbWriterThread(dbWriter,"reactiondb","reactions",tableFields,"//",logBuffer,sharedBuffer);
+
        String filePath =  "C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\reactions.txt";
        LogWriterThread logWriterThread = new LogWriterThread(filePath,logBuffer);
 
@@ -35,13 +39,9 @@ public class Main {
         executorService.execute(dbWriterThread);
         executorService.execute(logWriterThread);
 
-        executorService.shutdown();
-
-        //fileParserThread.run();
-        //dbWriterThread.run();
-
+        executorService.shutdown();*/
+        File f1 = new File("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\andela.txt");
+        boolean b = f1.delete();
 
     }
-
 }
-

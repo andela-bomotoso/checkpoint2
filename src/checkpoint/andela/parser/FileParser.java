@@ -35,6 +35,7 @@ public class FileParser {
     }
 
     public void readAttributeFile() {
+
         try {
                 if(fileExists()) {
                     bufferedReader = new BufferedReader(new FileReader(file));
@@ -49,6 +50,7 @@ public class FileParser {
         readAttributeFile();
         String line;
         try {
+
             while ((line = bufferedReader.readLine()) != null) {
 
                 if (!lineToBeSkipped(line)) {
@@ -56,16 +58,13 @@ public class FileParser {
                     String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
                     KeyValuePair keyValuePair = new KeyValuePair<>(pair[0], pair[1]);
                     updateBuffer(keyValuePair);
-                }
-
-                else if (line.startsWith(fileToParse.getRecordMarker())) {
+                } else if (line.startsWith(fileToParse.getRecordMarker())) {
 
                     KeyValuePair keyValuePair = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
                     updateBuffer(keyValuePair);
                 }
             }
         }
-
         catch (IOException ioException) {
             ioException.printStackTrace();
         }
@@ -83,7 +82,7 @@ public class FileParser {
         return (line.startsWith("/") && (line.trim() != fileToParse.getRecordMarker())) ||  line.startsWith(fileToParse.getCommentDelimiter()) || line.isEmpty();
     }
 
-    }
+}
 
 
 

@@ -47,6 +47,7 @@ DatabaseManager databaseManager;
 
     @Test
     public void testRunQuery() throws Exception {
+
         String dropDbIfExists = "DROP DATABASE IF EXISTS ANDELA";
         databaseManager.runQuery(dropDbIfExists);
         String createDatabaseQuery = "CREATE DATABASE ANDELA";
@@ -62,6 +63,5 @@ DatabaseManager databaseManager;
         String str2 = "CREATE TABLE ANDELA (Name,Age,Class";
         String str3 = databaseManager.removeLastCharacter(str1);
         assertEquals(str2,str3);
-
     }
 }

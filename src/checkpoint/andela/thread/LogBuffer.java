@@ -1,50 +1,35 @@
 package checkpoint.andela.thread;
 
-import checkpoint.andela.parser.KeyValuePair;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.util.concurrent.ArrayBlockingQueue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * Created by GRACE on 11/4/2015.
- */
 public class LogBuffer {
 
-    private String sharedLog;
-    boolean inUse = false;
-    boolean canWrite = true;
+    private final ArrayBlockingQueue<String>logBuffer;
+    public boolean inUse = false;
 
+    public LogBuffer()
+    {
+        logBuffer = new ArrayBlockingQueue<String>(1);
+    }
+    public void writeToLogBuffer( String currentLine) {
+        try {
 
-    public  synchronized String getLogBuffer() throws InterruptedException {
-        while (!inUse) {
-            wait();
+            logBuffer.put(currentLine);
+            inUse = true;
         }
-        inUse = false;
-        notifyAll();
-        //System.out.println(sharedLog);
-        return sharedLog;
-    }
-
-
-    public  synchronized void writeToLogBuffer( String currentLine) throws InterruptedException{
-        while (inUse) {
-            wait();
+        catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
         }
-        inUse = true;
-        sharedLog = currentLine;
-        //System.out.println(sharedLog);
-        notifyAll();
     }
-
-    public boolean getCanWrite() {
-        return canWrite;
-    }
-
-    public void setCanWrite(boolean canWrite) {
-        this.canWrite = canWrite;
+    public String getLogBuffer() {
+        String currentLog = "";
+        try {
+            currentLog = logBuffer.take();
+            inUse = false;
+        }
+        catch(InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+        return currentLog;
     }
 }
