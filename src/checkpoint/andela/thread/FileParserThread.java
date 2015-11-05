@@ -11,19 +11,22 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
-    public class FileParserThread implements Runnable {
+public class FileParserThread implements Runnable {
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
         private AttributeValueFile fileToParse;
+        LogBuffer logBuffer;
         Buffer sharedBuffer = new Buffer();
+        ThreadManager threadManager = new ThreadManager();
         private File file;
         BufferedReader bufferedReader;
 
-        public FileParserThread(AttributeValueFile fileToParse, Buffer sharedBuffer) {
+        public FileParserThread(AttributeValueFile fileToParse,LogBuffer logBuffer,  Buffer sharedBuffer) {
         this.fileToParse = fileToParse;
         file = new File(fileToParse.getFileAddress());
+        this.logBuffer = logBuffer;
         this.sharedBuffer = sharedBuffer;
         }
 
@@ -39,17 +42,17 @@ import java.io.IOException;
                             String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
                             KeyValuePair keyValuePair = new KeyValuePair<>(pair[0], pair[1]);
                             sharedBuffer.writeContentToBuffer(keyValuePair);
+                            logThreadWriteActivity();
 
                         } else if (line.startsWith(fileToParse.getRecordMarker())) {
                             KeyValuePair keyValuePair = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
                             sharedBuffer.writeContentToBuffer(keyValuePair);
+                            logThreadWriteActivity();
                         }
                     }
                     sharedBuffer.setCanWrite(false);
 
                     return;
-
-
 
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -74,5 +77,22 @@ import java.io.IOException;
         public boolean lineToBeSkipped(String line) {
             return (line.startsWith("/") && (line.trim() != fileToParse.getRecordMarker())) ||  line.startsWith(fileToParse.getCommentDelimiter()) || line.isEmpty();
         }
+        public void logThreadWriteActivity(){
+           List<String>bufferDetails = sharedBuffer.getBufferDetails();
+            String bufferWriteTime = bufferDetails.get(0);
+            String bufferKey = bufferDetails.get(1);
+            String bufferValue = bufferDetails.get(2);
+            String currentLog = getClass().getSimpleName()+ bufferWriteTime+")----wrote "+bufferKey+" "+bufferValue+" to buffer";
+            //System.out.println(currentLog);
+//            try{
+//                logBuffer.writeToLogBuffer(currentLog);
+//            }
+//            catch (InterruptedException interruptedException) {
+//                interruptedException.printStackTrace();
+//            }
+            //System.out.println(currentLog);
+            //threadManager.updateLog(currentLog);
+        }
+
 
 }

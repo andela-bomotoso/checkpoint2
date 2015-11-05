@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.locks.Condition;
@@ -14,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Buffer {
 
     private KeyValuePair sharedBuffer;
-    private String threadName;
     boolean inUse = false;
     boolean canWrite = true;
     DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -27,7 +28,7 @@ public class Buffer {
         }
             inUse = false;
             notifyAll();
-            LogReadActivity("DbWriter");
+        System.out.println("dbwriter thread"+getBufferDetails().get(0)+" "+getBufferDetails().get(1) + " "+getBufferDetails().get(2));
             return sharedBuffer;
         }
 
@@ -38,20 +39,19 @@ public class Buffer {
         }
         inUse = true;
         sharedBuffer = currentLine;
-        LogWriteActivity("FileParser");
-        //ThreadManager.updateLog();
+        System.out.println("fileparser thread"+getBufferDetails().get(0)+" "+getBufferDetails().get(1) + " "+getBufferDetails().get(2));
+
         notifyAll();
     }
 
-    public String LogWriteActivity(String ThreadName) {
+    public List<String> getBufferDetails() {
 
-        String str =  ThreadName+"(" + dateTimeFormatter.print(DateTime.now()) + ")---- wrote " + sharedBuffer.key + " " + sharedBuffer.value + " to buffer";
-        return str;
-    }
+        String timeHappened = dateTimeFormatter.print(DateTime.now());
+        String key = sharedBuffer.key.toString();
+        String value = sharedBuffer.value.toString();
+        List<String>bufferContent = new ArrayList<String>(Arrays.asList(timeHappened.toString(),key,value));
 
-    public void LogReadActivity(String ThreadName) {
-        String str = ThreadName+ "(" + dateTimeFormatter.print(DateTime.now()) + ")---- collected " + sharedBuffer.key + " " + sharedBuffer.value + " to buffer";
-        System.out.println(str);
+        return bufferContent;
     }
 
     public boolean getCanWrite() {
