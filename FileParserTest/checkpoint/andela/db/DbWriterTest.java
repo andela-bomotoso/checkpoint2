@@ -39,9 +39,9 @@ public class DbWriterTest extends TestCase{
         dbWriter = new DbWriter( databaseManager);
     }
 
-    @Ignore
+    @Test
     public void testWriteBufferToDatabase() throws Exception {
-        //dbWriter.writeBufferToDatabase(bufferedFileContent,"reactiondb","reactions",tableFields,"//");
+        dbWriter.writeBufferToDatabase(bufferedFileContent,"reactiondb","reactions",tableFields,"//");
     }
 
     @Test
@@ -58,7 +58,6 @@ public class DbWriterTest extends TestCase{
 
         assertEquals(recordValues.size(), recordKeys.size());
         assertEquals(recordValuesAfterModification.get(0),recordValues.get(0));
-
     }
 
     @Test

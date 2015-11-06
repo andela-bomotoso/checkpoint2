@@ -13,17 +13,18 @@ import java.util.List;
 
 public class DbWriterThread implements Runnable {
 
-    DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-    DatabaseManager databaseManager;
-    LogBuffer logBuffer;
-    Buffer sharedBuffer = new Buffer();
-    KeyValuePair bufferRead;
-    DbWriter dbWriter = new DbWriter(databaseManager);
 
     private String databaseName;
     private String tableName;
     private List<String>tableFields;
     private String recordMaker;
+
+    DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    DatabaseManager databaseManager;
+    LogBuffer logBuffer;
+    Buffer sharedBuffer = new Buffer();
+    DbWriter dbWriter = new DbWriter(databaseManager);
+    public static boolean runState;
 
     public DbWriterThread(DbWriter dbWriter, String databasename, String tableName,
                           List<String> tableFields, String recordMaker, LogBuffer logBuffer,Buffer sharedBuffer) {
@@ -38,26 +39,30 @@ public class DbWriterThread implements Runnable {
     }
 
     public void run() {
-     List<KeyValuePair<String,String>> bufferedRecord = new ArrayList<KeyValuePair<String, String>>();
 
-       while (true) {
+        runState=true;
+        List<KeyValuePair<String,String>> bufferedRecord = new ArrayList<KeyValuePair<String, String>>();
+        try {
+            while (runState) {
 
-            try {
-
-                bufferRead = sharedBuffer.getContentFromBuffer();
-                logThreadReadActivity();
+                KeyValuePair bufferRead = sharedBuffer.getContentFromBuffer();
+                logThreadReadActivity(bufferRead);
                 bufferedRecord.add(bufferRead);
 
-                if(bufferRead.key.equals(recordMaker)) {
+                if (bufferRead.key.equals(recordMaker)) {
                     writeRecordToDatabase(bufferedRecord);
                 }
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
+
+                runState = FileParserThread.runState;
             }
+            runState = false;
+
+        } catch (InterruptedException exception) {
+                exception.printStackTrace();
         }
    }
 
-    public void logThreadReadActivity() {
+    public void logThreadReadActivity(KeyValuePair bufferRead) {
 
         String bufferReadTime = dateTimeFormatter.print(DateTime.now());
         String key =   bufferRead.key.toString();
@@ -69,7 +74,7 @@ public class DbWriterThread implements Runnable {
 
     public void writeRecordToDatabase(List<KeyValuePair<String,String>> bufferedRecord) {
 
-        dbWriter.writeBufferToDatabase(bufferedRecord,databaseName,tableName,tableFields,recordMaker);
+       dbWriter.writeBufferToDatabase(bufferedRecord,databaseName,tableName,tableFields,recordMaker);
        bufferedRecord.clear();
     }
 }

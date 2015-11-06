@@ -19,7 +19,8 @@ public class FileParserThread implements Runnable {
     LogBuffer logBuffer;
     File file;
     BufferedReader bufferedReader;
-    KeyValuePair bufferWrite;
+    public static boolean runState;
+
 
     public FileParserThread(AttributeValueFile fileToParse, LogBuffer logBuffer, Buffer sharedBuffer) {
 
@@ -30,28 +31,34 @@ public class FileParserThread implements Runnable {
     }
 
     public void run() {
-        readAttributeFile();
 
+        readAttributeFile();
+        runState = true;
         String line;
+        System.out.println("Reading file and writing to Database.....");
         try {
-            while ((line = bufferedReader.readLine()) != null && sharedBuffer.getCanWrite()) {
+            while (((line = bufferedReader.readLine()) != null)) {
+                KeyValuePair bufferWrite;
 
                 if (!lineToBeSkipped(line)) {
 
                     String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
                     bufferWrite = new KeyValuePair<>(pair[0], pair[1]);
                     sharedBuffer.writeContentToBuffer(bufferWrite);
-                    logThreadWriteActivity();
+                    logThreadWriteActivity(bufferWrite);
 
                 } else if (line.startsWith(fileToParse.getRecordMarker())) {
                     bufferWrite = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
                     sharedBuffer.writeContentToBuffer(bufferWrite);
-                    logThreadWriteActivity();
+                    logThreadWriteActivity(bufferWrite);
                 }
+
             }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+
+        runState = false;
     }
 
     public void readAttributeFile() {
@@ -72,7 +79,7 @@ public class FileParserThread implements Runnable {
         return (line.startsWith("/") && (line.trim() != fileToParse.getRecordMarker())) || line.startsWith(fileToParse.getCommentDelimiter()) || line.isEmpty();
     }
 
-    public void logThreadWriteActivity() {
+    public void logThreadWriteActivity(KeyValuePair bufferWrite) {
 
         String bufferWriteTime = dateTimeFormatter.print(DateTime.now());
         String key = bufferWrite.key.toString();

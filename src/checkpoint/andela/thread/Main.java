@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-       /*Buffer sharedBuffer = new Buffer();
+       Buffer sharedBuffer = new Buffer();
        LogBuffer logBuffer = new LogBuffer();
 
        AttributeValueFile attributeValueFile = new AttributeValueFile("#"," - ","//");
@@ -39,9 +39,8 @@ public class Main {
         executorService.execute(dbWriterThread);
         executorService.execute(logWriterThread);
 
-        executorService.shutdown();*/
-        File f1 = new File("C:\\Users\\GRACE\\.IdeaIC14\\Checkpoints\\checkpoint2\\andela.txt");
-        boolean b = f1.delete();
+        executorService.shutdown();
+
 
     }
 }

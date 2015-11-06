@@ -2,9 +2,6 @@ package checkpoint.andela.thread;
 
 import java.io.*;
 
-/**
- * Created by GRACE on 11/4/2015.
- */
 public class LogWriterThread implements Runnable{
 
     private File fileToWrite;
@@ -12,6 +9,7 @@ public class LogWriterThread implements Runnable{
     private BufferedWriter bufferedWriter;
     private FileWriter fileWriter;
     private LogBuffer logBuffer;
+    private boolean runState;
 
     public LogWriterThread(String filePath,LogBuffer logBuffer) {
         fileToWrite = new File(filePath);
@@ -46,10 +44,15 @@ public class LogWriterThread implements Runnable{
     }
 
     public void run() {
+        runState = true;
 
-        while (true){
-        String currentLog = logBuffer.getLogBuffer();
-        writeBufferToFile(currentLog);
-       }
+        while (runState){
+
+            String currentLog = logBuffer.getLogBuffer();
+            writeBufferToFile(currentLog);
+            runState = DbWriterThread.runState;
+        }
+
+        System.out.println("\n\n\nProcess Finished");
     }
 }
