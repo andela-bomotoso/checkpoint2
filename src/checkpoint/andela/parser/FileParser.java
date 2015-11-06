@@ -1,16 +1,23 @@
 package checkpoint.andela.parser;
 
+import checkpoint.andela.thread.Buffer;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.io.*;
+
 import java.util.*;
 
-public class FileParser implements Runnable {
+public class FileParser {
 
     private AttributeValueFile fileToParse;
     private File file;
-    FileInputStream fileInputStream;
-    BufferedInputStream bufferedInputStream;
+    BufferedReader bufferedReader;
+    List<KeyValuePair<String, String>> keyValues = new ArrayList<KeyValuePair<String, String>>();
 
     public FileParser(AttributeValueFile fileToParse) {
+
         this.fileToParse = fileToParse;
         file = new File(fileToParse.getFileAddress());
     }
@@ -19,7 +26,7 @@ public class FileParser implements Runnable {
         return fileToParse;
     }
 
-      public void setFileToParse(AttributeValueFile fileToParse) {
+    public void setFileToParse(AttributeValueFile fileToParse) {
         this.fileToParse = fileToParse;
     }
 
@@ -27,51 +34,54 @@ public class FileParser implements Runnable {
         return file.exists();
     }
 
-    public List<KeyValuePair<String, String>> readAttributeFile() {
-        List<KeyValuePair<String, String>> keyValues = new ArrayList<KeyValuePair<String, String>>();
-
-        final int key = 0;
-        final int value = 1;;
+    public void readAttributeFile() {
 
         try {
-            BufferedReader bfr = new BufferedReader(new FileReader(file));
-            String line;
-
-            while ((line = bfr.readLine()) != null) {
-                if ( !lineToBeSkipped(line)) {
-                    String[] pair = line.trim().split(" - ");
-                    keyValues.add(new KeyValuePair<>(pair[0],pair[1]));
-                }
-            }
-
-            fileToParse.setKeyValues(keyValues);
-
-        } catch (IOException ioException) {
-            System.out.println(ioException.getMessage());
-
-        } finally {
-
-            try {
-
-                if (bufferedInputStream != null && fileInputStream != null) {
-                    fileInputStream.close();
-                    bufferedInputStream.close();
-                }
-
-            } catch (IOException ioException) {
-                System.out.println(ioException.getMessage());
+                if(fileExists()) {
+                    bufferedReader = new BufferedReader(new FileReader(file));
             }
         }
+        catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+
+    public  List<KeyValuePair<String, String>> writeFileToBuffer() {
+        readAttributeFile();
+        String line;
+        try {
+
+            while ((line = bufferedReader.readLine()) != null) {
+
+                if (!lineToBeSkipped(line)) {
+
+                    String[] pair = line.trim().split(fileToParse.getKeyValueSeparator(), 2);
+                    KeyValuePair keyValuePair = new KeyValuePair<>(pair[0], pair[1]);
+                    updateBuffer(keyValuePair);
+                } else if (line.startsWith(fileToParse.getRecordMarker())) {
+
+                    KeyValuePair keyValuePair = new KeyValuePair<>(fileToParse.getRecordMarker(), "");
+                    updateBuffer(keyValuePair);
+                }
+            }
+        }
+        catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+        fileToParse.setKeyValues(keyValues);
+
         return keyValues;
     }
 
+    public void updateBuffer(KeyValuePair keyValuePair) {
+        keyValues.add(keyValuePair);
+
+    }
     public boolean lineToBeSkipped(String line) {
-        return  line.startsWith("/") || line.startsWith("#") || line.isEmpty();
+        return (line.startsWith("/") && (line.trim() != fileToParse.getRecordMarker())) ||  line.startsWith(fileToParse.getCommentDelimiter()) || line.isEmpty();
     }
 
-    public void run() {
-
-    }
 }
 
 

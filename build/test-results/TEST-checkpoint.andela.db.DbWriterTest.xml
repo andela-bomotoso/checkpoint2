@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="checkpoint.andela.db.DbWriterTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2015-11-03T21:13:16" hostname="GRACE-PC" time="88.382">
+  <properties/>
+  <testcase name="testWriteBufferToDatabase" classname="checkpoint.andela.db.DbWriterTest" time="88.226"/>
+  <testcase name="testEscapeDoubleQuotes" classname="checkpoint.andela.db.DbWriterTest" time="0.071"/>
+  <testcase name="testModifyExistingField" classname="checkpoint.andela.db.DbWriterTest" time="0.042"/>
+  <testcase name="testGenerateInsertStatement" classname="checkpoint.andela.db.DbWriterTest" time="0.031"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
